@@ -13,7 +13,8 @@ public class Hero implements Serializable {
     private static final Long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "sequence_generator")
     @Column(name = "id")
     private Long id;
 

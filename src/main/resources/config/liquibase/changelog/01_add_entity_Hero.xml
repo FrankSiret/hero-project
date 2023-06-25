@@ -20,4 +20,12 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="load_data_entity_hero" author="me" context="fake">
+        <loadData tableName="hero" file="config/liquibase/fake-data/hero.csv" >
+            <column name="id" type="numeric" />
+            <column name="name" type="string" />
+            <column name="super_power" type="string" />
+        </loadData>
+    </changeSet>
+
 </databaseChangeLog>

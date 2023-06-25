@@ -2,6 +2,7 @@ package com.test.hero.heroproject.services.dto;
 
 import com.sun.istack.NotNull;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
 
