@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface HeroRepository extends JpaRepository<Hero, Long> {
-    Page<Hero> findAllByNameLikeIgnoreCase(String name, Pageable pageable);
+    List<Hero> findByNameContainsIgnoreCase(String name, Pageable pageable);
 }

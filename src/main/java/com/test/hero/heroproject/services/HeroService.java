@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -42,8 +43,14 @@ public class HeroService {
     }
 
     public List<HeroDTO> findAllByName(String name, Pageable pageable) {
-        log.info("Request to find all Hero by name containst : {}", name);
-        List<Hero> list = heroRepository.findAllByNameLikeIgnoreCase(name, pageable).getContent();
+        log.info("Request to find all Hero by name contains : {}", name);
+        List<Hero> list = heroRepository.findByNameContainsIgnoreCase(name, pageable);
         return heroMapper.toDto(list);
+    }
+
+    public Optional<HeroDTO> findById(Long id) {
+        log.info("Request to find a Hero by id : {}", id);
+        Optional<Hero> hero = heroRepository.findById(id);
+        return hero.map(heroMapper::toDto);
     }
 }

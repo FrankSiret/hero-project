@@ -20,6 +20,8 @@ import javax.persistence.EntityManager;
 import java.io.IOException;
 import java.util.List;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasSize;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -65,6 +67,7 @@ public class HeroResourceTest {
     @BeforeEach
     void setUp() {
         hero = createEntity(em);
+        heroRepository.deleteAll();
     }
 
     @Test
@@ -104,6 +107,71 @@ public class HeroResourceTest {
         Hero testHero = heroList.get(heroList.size() - 1);
         assertThat(testHero.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testHero.getSuperPower()).isEqualTo(UPDATED_SUPERPOWER);
+    }
+
+    @Test
+    void getAllHeroes() throws Exception {
+
+        heroRepository.saveAndFlush(hero);
+
+        restHeroMockMvc
+                .perform(get(ENTITY_API_URL))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(hero.getId().intValue())))
+                .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+                .andExpect(jsonPath("$.[*].superPower").value(hasItem(DEFAULT_SUPERPOWER)));
+    }
+
+    @Test
+    void getHeroById() throws Exception {
+
+        heroRepository.saveAndFlush(hero);
+
+        restHeroMockMvc
+                .perform(get(ENTITY_API_URL_ID, hero.getId()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id").value(hero.getId().intValue()))
+                .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
+                .andExpect(jsonPath("$.superPower").value(DEFAULT_SUPERPOWER));
+    }
+
+    @Test
+    void getHeroByNameContains() throws Exception {
+
+        // Ant-Man
+        heroRepository.saveAndFlush(hero);
+
+        Hero hero2 = createEntity(em);
+        hero2.setName("man");
+        Hero hero3 = createEntity(em);
+        hero3.setName("cat");
+        Hero hero4 = createEntity(em);
+        hero4.setName("super MAN");
+
+        heroRepository.saveAllAndFlush(List.of(hero2, hero3, hero4));
+
+        final String name = "man";
+
+        restHeroMockMvc
+                .perform(get(ENTITY_API_URL + "/by-name/{name}", name))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(3)));
+
+    }
+
+    @Test
+    void getHeroByIdNotFound() throws Exception {
+
+        heroRepository.saveAndFlush(hero);
+        HeroDTO heroDTO = heroMapper.toDto(hero);
+
+        restHeroMockMvc
+                .perform(get(ENTITY_API_URL_ID, Long.MAX_VALUE))
+                .andExpect(status().isNotFound());
     }
 
 

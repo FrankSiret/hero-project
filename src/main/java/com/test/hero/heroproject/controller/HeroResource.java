@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -39,6 +40,16 @@ public class HeroResource {
         log.info("REST request to get all Heroes");
         Page<HeroDTO> page = heroService.findAll(pageable);
         return ResponseEntity.ok().body(page.getContent());
+    }
+
+    @GetMapping("/heroes/{id}")
+    public ResponseEntity<HeroDTO> getHeroById(@PathVariable Long id) {
+        log.info("REST request to get a Hero by id : {}", id);
+        Optional<HeroDTO> hero = heroService.findById(id);
+        if(hero.isPresent()) {
+            return ResponseEntity.ok().body(hero.get());
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/heroes/by-name/{name}")
