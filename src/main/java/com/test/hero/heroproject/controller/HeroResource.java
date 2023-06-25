@@ -1,5 +1,6 @@
 package com.test.hero.heroproject.controller;
 
+import com.test.hero.heroproject.config.TimingRequest;
 import com.test.hero.heroproject.controller.errors.BadRequestAlertException;
 import com.test.hero.heroproject.repository.HeroRepository;
 import com.test.hero.heroproject.services.HeroService;
@@ -35,6 +36,7 @@ public class HeroResource {
         this.heroRepository = heroRepository;
     }
 
+    @TimingRequest
     @GetMapping("/heroes")
     public ResponseEntity<List<HeroDTO>> getAllHero(Pageable pageable) {
         log.info("REST request to get all Heroes");
@@ -42,6 +44,7 @@ public class HeroResource {
         return ResponseEntity.ok().body(page.getContent());
     }
 
+    @TimingRequest
     @GetMapping("/heroes/{id}")
     public ResponseEntity<HeroDTO> getHeroById(@PathVariable Long id) {
         log.info("REST request to get a Hero by id : {}", id);
@@ -52,6 +55,7 @@ public class HeroResource {
         return ResponseEntity.notFound().build();
     }
 
+    @TimingRequest
     @GetMapping("/heroes/by-name/{name}")
     public ResponseEntity<List<HeroDTO>> getAllHeroByName(@PathVariable String name, Pageable pageable) {
         log.info("REST request to get all Heroes where name contains : {}", name);
@@ -59,6 +63,7 @@ public class HeroResource {
         return ResponseEntity.ok().body(page);
     }
 
+    @TimingRequest
     @PostMapping("/heroes")
     @PermitAll
     public ResponseEntity<HeroDTO> createHero(@RequestBody HeroDTO heroDTO) throws URISyntaxException {
@@ -72,6 +77,7 @@ public class HeroResource {
                 .body(result);
     }
 
+    @TimingRequest
     @PutMapping("/heroes/{id}")
     @PermitAll
     public ResponseEntity<HeroDTO> updateHero(@PathVariable Long id, @RequestBody HeroDTO heroDTO) throws URISyntaxException {
@@ -89,5 +95,12 @@ public class HeroResource {
         return ResponseEntity.ok(result);
     }
 
+    @TimingRequest
+    @DeleteMapping("/heroes/{id}")
+    public ResponseEntity<Void> deleteHero(@PathVariable Long id) {
+        log.info("REST request to delete Hero : {}", id);
+        heroService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }

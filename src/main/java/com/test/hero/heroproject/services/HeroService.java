@@ -53,4 +53,9 @@ public class HeroService {
         Optional<Hero> hero = heroRepository.findById(id);
         return hero.map(heroMapper::toDto);
     }
+
+    public void delete(Long id) {
+        log.info("Request to delete Hero : {}", id);
+        heroRepository.deleteById(id);
+    }
 }

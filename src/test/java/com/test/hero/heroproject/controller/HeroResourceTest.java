@@ -174,5 +174,17 @@ public class HeroResourceTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void deleteHero() throws Exception {
+        heroRepository.saveAndFlush(hero);
+        int databaseSizeBeforeDelete = heroRepository.findAll().size();
+
+        restHeroMockMvc
+                .perform(delete(ENTITY_API_URL_ID, hero.getId()).accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        List<Hero> heroList = heroRepository.findAll();
+        assertThat(heroList).hasSize(databaseSizeBeforeDelete - 1);
+    }
 
 }
