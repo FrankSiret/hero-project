@@ -1,19 +1,18 @@
 package com.test.hero.heroproject.controller;
 
 import com.test.hero.heroproject.config.TimingRequest;
-import com.test.hero.heroproject.controller.errors.BadRequestAlertException;
+import com.test.hero.heroproject.exception.CustomException;
 import com.test.hero.heroproject.repository.HeroRepository;
 import com.test.hero.heroproject.services.HeroService;
 import com.test.hero.heroproject.services.dto.HeroDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.PermitAll;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,8 +24,6 @@ import java.util.Optional;
 public class HeroResource {
 
     private final Logger log = LoggerFactory.getLogger(HeroResource.class);
-
-    private static final String ENTITY_NAME = "hero";
 
     private final HeroService heroService;
 
@@ -69,7 +66,7 @@ public class HeroResource {
     public ResponseEntity<HeroDTO> createHero(@Valid @RequestBody HeroDTO heroDTO) throws URISyntaxException {
         log.info("REST request to save Hero : {}", heroDTO);
         if(heroDTO.getId() != null) {
-            throw new BadRequestAlertException("A new hero cannot already have an ID", ENTITY_NAME, "idexist");
+            throw new CustomException("A new hero cannot already have an ID", HttpStatus.BAD_REQUEST);
         }
         HeroDTO result = heroService.save(heroDTO);
         return ResponseEntity
@@ -82,13 +79,13 @@ public class HeroResource {
     public ResponseEntity<HeroDTO> updateHero(@PathVariable Long id, @RequestBody HeroDTO heroDTO) throws URISyntaxException {
         log.info("REST request to update a Hero : {}, {}", id, heroDTO);
         if(heroDTO.getId() == null) {
-            throw new BadRequestAlertException("A hero cannot have ID null", ENTITY_NAME, "idnull");
+            throw new CustomException("A hero cannot have ID null", HttpStatus.BAD_REQUEST);
         }
         if(!heroDTO.getId().equals(id)) {
-            throw new BadRequestAlertException("A hero id dismatch", ENTITY_NAME, "idvalid");
+            throw new CustomException("A hero id dismatch", HttpStatus.BAD_REQUEST);
         }
         if(!heroRepository.existsById(id)) {
-            throw new BadRequestAlertException("A hero not exist", ENTITY_NAME, "notexist");
+            throw new CustomException("A hero not exist", HttpStatus.NOT_FOUND);
         }
         HeroDTO result = heroService.save(heroDTO);
         return ResponseEntity.ok(result);
