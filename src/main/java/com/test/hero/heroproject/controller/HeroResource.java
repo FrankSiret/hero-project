@@ -7,6 +7,7 @@ import com.test.hero.heroproject.services.HeroService;
 import com.test.hero.heroproject.services.dto.HeroDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -65,8 +66,7 @@ public class HeroResource {
 
     @TimingRequest
     @PostMapping("/heroes")
-    @PermitAll
-    public ResponseEntity<HeroDTO> createHero(@RequestBody HeroDTO heroDTO) throws URISyntaxException {
+    public ResponseEntity<HeroDTO> createHero(@Valid @RequestBody HeroDTO heroDTO) throws URISyntaxException {
         log.info("REST request to save Hero : {}", heroDTO);
         if(heroDTO.getId() != null) {
             throw new BadRequestAlertException("A new hero cannot already have an ID", ENTITY_NAME, "idexist");
@@ -79,7 +79,6 @@ public class HeroResource {
 
     @TimingRequest
     @PutMapping("/heroes/{id}")
-    @PermitAll
     public ResponseEntity<HeroDTO> updateHero(@PathVariable Long id, @RequestBody HeroDTO heroDTO) throws URISyntaxException {
         log.info("REST request to update a Hero : {}, {}", id, heroDTO);
         if(heroDTO.getId() == null) {

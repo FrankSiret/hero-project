@@ -1,5 +1,6 @@
 package com.test.hero.heroproject.services.mapper;
 
+import com.test.hero.heroproject.IntegrationTest;
 import com.test.hero.heroproject.controller.HeroResourceTest;
 import com.test.hero.heroproject.domain.Hero;
 import com.test.hero.heroproject.services.HeroService;
@@ -13,6 +14,7 @@ import javax.persistence.EntityManager;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+@IntegrationTest
 class HeroMapperTest {
 
     private Hero hero;

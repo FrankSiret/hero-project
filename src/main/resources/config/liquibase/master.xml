@@ -6,5 +6,6 @@
 
     <include file="config/liquibase/changelog/00_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/01_add_entity_Hero.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/01_add_entity_User.xml" relativeToChangelogFile="false"/>
 
 </databaseChangeLog>

@@ -1,5 +1,6 @@
 package com.test.hero.heroproject.domain;
 
+import com.test.hero.heroproject.IntegrationTest;
 import com.test.hero.heroproject.controller.HeroResourceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@IntegrationTest
 class HeroTest {
 
     private Hero hero1;

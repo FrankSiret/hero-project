@@ -1,6 +1,7 @@
 package com.test.hero.heroproject.controller;
 
 import com.test.hero.heroproject.HeroProjectApplication;
+import com.test.hero.heroproject.IntegrationTest;
 import com.test.hero.heroproject.domain.Hero;
 import com.test.hero.heroproject.repository.HeroRepository;
 import com.test.hero.heroproject.services.dto.HeroDTO;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cache.CacheManager;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,6 +21,7 @@ import javax.persistence.EntityManager;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasSize;
@@ -28,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @AutoConfigureMockMvc
 @WithMockUser
-@SpringBootTest(classes = {HeroProjectApplication.class})
+@IntegrationTest
 public class HeroResourceTest {
 
     public static final Long DEFAULT_ID = 1L;
@@ -55,6 +58,9 @@ public class HeroResourceTest {
     @Autowired
     private MockMvc restHeroMockMvc;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     Hero hero;
 
     public static Hero createEntity(EntityManager em) {
@@ -68,6 +74,7 @@ public class HeroResourceTest {
     void setUp() {
         hero = createEntity(em);
         heroRepository.deleteAll();
+        Objects.requireNonNull(cacheManager.getCache("heroes")).clear();
     }
 
     @Test
