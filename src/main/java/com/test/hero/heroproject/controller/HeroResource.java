@@ -7,6 +7,7 @@ import com.test.hero.heroproject.services.HeroService;
 import com.test.hero.heroproject.services.dto.HeroDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -36,7 +37,7 @@ public class HeroResource {
 
     @TimingRequest
     @GetMapping("/heroes")
-    public ResponseEntity<List<HeroDTO>> getAllHero(Pageable pageable) {
+    public ResponseEntity<List<HeroDTO>> getAllHero(@ParameterObject Pageable pageable) {
         log.info("REST request to get all Heroes");
         Page<HeroDTO> page = heroService.findAll(pageable);
         return ResponseEntity.ok().body(page.getContent());
@@ -55,7 +56,7 @@ public class HeroResource {
 
     @TimingRequest
     @GetMapping("/heroes/by-name/{name}")
-    public ResponseEntity<List<HeroDTO>> getAllHeroByName(@PathVariable String name, Pageable pageable) {
+    public ResponseEntity<List<HeroDTO>> getAllHeroByName(@PathVariable String name, @ParameterObject Pageable pageable) {
         log.info("REST request to get all Heroes where name contains : {}", name);
         List<HeroDTO> page = heroService.findAllByName(name, pageable);
         return ResponseEntity.ok().body(page);
